@@ -1,6 +1,7 @@
 import threading
 import time
 import os
+import subprocess
 import uvicorn
 from fastapi import FastAPI
 
@@ -22,6 +23,11 @@ def DBwatcher():
             time.sleep(1)
         else:
             sp.reserveProcess(process[0])  # field id
+            sysprocess = subprocess.Popen(process[1], shell=True,
+                                          stdout=subprocess.PIPE,
+                                          universal_newlines=True)
+            print(sysprocess.pid) 
+
        	    os.system(process[1])          # field processcmd
             sp.processIsDone(process[0])   # field id
         print("watching")
@@ -31,5 +37,5 @@ if __name__ == "__main__":
 
      print("star thread FastApi")
      thread_fastapi.start()
-     uvicorn.run("test2:app", host="0.0.0.0", port=5001, debug=True,log_level="info",workers=5)
+     uvicorn.run("worker:app", host="0.0.0.0", port=5001, debug=True,log_level="info")
 
